@@ -1,0 +1,47 @@
+specVersion: "2.4"
+metadata:
+  name: ec.log.integrations.ECLogIntegrations
+type: application
+framework:
+  name: SAPUI5
+  version: 1.79.0
+  libraries:
+    - name: sap.ui.layout
+    - name: sap.ui.core
+    - name: sap.m
+    - name: sap.f
+    - name: sap.ui.comp
+    - name: sap.ui.generic.app
+    - name: sap.ui.table
+    - name: sap.ushell
+    - name: themelib_sap_bluecrystal
+    - name: themelib_sap_fiori_3
+server:
+  customMiddleware:
+    - name: fiori-tools-proxy
+      afterMiddleware: compression
+      configuration:
+        ignoreCertError: false
+        backend:
+          - path: /sap
+            url: https://fioridev.votorantim.com.br:443
+            client: "100"
+            destination: FIORIDEV_GATEWAY
+          - path: /PKG_COCKPIT_INTEGRACAO_EC/ODATA_TB_COCKPIT_INTEGRACAO_EC.xsodata
+            destination: FIORIDEV_GATEWAY
+            url: https://fioridev.votorantim.com.br:443
+            client: "100"
+          - path: /sap/bc/ui5_ui5
+            destination: SAP_GW_HUB
+            url: ""
+    - name: fiori-tools-appreload
+      afterMiddleware: compression
+      configuration:
+        port: 35729
+        path: webapp
+        delay: 300
+    - name: fiori-tools-preview
+      afterMiddleware: fiori-tools-appreload
+      configuration:
+        component: ec.log.integrations.ECLogIntegrations
+        ui5Theme: sap_fiori_3
